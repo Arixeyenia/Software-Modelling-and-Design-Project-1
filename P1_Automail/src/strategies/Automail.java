@@ -2,13 +2,14 @@ package strategies;
 
 import automail.IMailDelivery;
 import automail.Robot;
+import automail.SpecialRobot;
 
 public class Automail {
 	      
     public Robot[] robots;
     public IMailPool mailPool;
     
-    public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots) {
+    public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots, boolean caution) {
     	// Swap between simple provided strategies and your strategies here
     	    	
     	/** Initialize the MailPool */
@@ -17,7 +18,11 @@ public class Automail {
     	
     	/** Initialize robots */
     	robots = new Robot[numRobots];
-    	for (int i = 0; i < numRobots; i++) robots[i] = new Robot(delivery, mailPool);
+    	if (!caution) {
+    	    for (int i = 0; i < numRobots; i++) robots[i] = new Robot(delivery, mailPool);
+        } else {
+            for (int i = 0; i < numRobots; i++) robots[i] = new SpecialRobot(delivery, mailPool);
+        }
     }
     
 }

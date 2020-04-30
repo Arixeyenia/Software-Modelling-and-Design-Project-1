@@ -37,6 +37,8 @@ public class Robot {
      * @param delivery governs the final delivery
      * @param mailPool is the source of mail items
      */
+    // TODO: IMPLEMENT BEHAVIOUR (AS ENUM?)
+    // PRIOROTISE NON FRAGILE ITEMS SO THEY DONT HAVE TO WAIT FOR THE FRAGILE ITEM TO BE DELIVERED
     public Robot(IMailDelivery delivery, IMailPool mailPool){
     	id = "R" + hashCode();
         // current_state = RobotState.WAITING;
@@ -50,6 +52,10 @@ public class Robot {
     
     public void dispatch() {
     	receivedDispatch = true;
+    }
+
+    public int getCurrent_floor() {
+        return current_floor;
     }
 
     /**

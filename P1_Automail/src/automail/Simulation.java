@@ -18,6 +18,7 @@ import java.util.Properties;
  * This class simulates the behaviour of AutoMail
  */
 public class Simulation {
+
     /** Constant for the mail generator */
     private static int MAIL_TO_CREATE;
     private static int MAIL_MAX_WEIGHT;
@@ -29,7 +30,15 @@ public class Simulation {
     private static ArrayList<MailItem> MAIL_DELIVERED;
     private static double total_score = 0;
 
-    public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	/** Variables to be printed */
+	private static int normal_packs = 0;
+	private static int caution_packs = 0;
+	private static int normal_weight = 0;
+	private static int caution_weight = 0;
+	private static int wrapping_time = 0;
+
+
+	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     	Properties automailProperties = new Properties();
 		// Default properties
     	automailProperties.setProperty("Robots", "Standard");
@@ -101,7 +110,7 @@ public class Simulation {
         }
         Integer seed = seedMap.get(true);
         System.out.println("Seed: " + (seed == null ? "null" : seed.toString()));
-        Automail automail = new Automail(mailPool, new ReportDelivery(), robots);
+        Automail automail = new Automail(mailPool, new ReportDelivery(), robots, CAUTION_ENABLED);
         MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, automail.mailPool, seedMap);
         
         /** Initiate all the mail */
@@ -155,5 +164,12 @@ public class Simulation {
         System.out.println("T: "+Clock.Time()+" | Simulation complete!");
         System.out.println("Final Delivery time: "+Clock.Time());
         System.out.printf("Final Score: %.2f%n", total_score);
+
+        // Stats required to print
+		System.out.printf("Number of packages delivered normally: %d%n", normal_packs);
+		System.out.printf("Number of packages delivered using caution: %d%n", caution_packs);
+		System.out.printf("Total weight of packages delivered normally: %d%n", normal_weight);
+		System.out.printf("Total weight of packages delivered using caution: %d%n", caution_weight);
+		System.out.printf("Total time spent wrapping and unwrapping: %d%n", wrapping_time);
     }
 }

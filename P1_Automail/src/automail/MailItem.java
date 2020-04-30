@@ -21,6 +21,29 @@ public class MailItem {
     /** The fragile property */
     protected final boolean fragile;
 
+    private static int UNWRAPPED = 0;
+    private static int HALF_WRAPPED = 1;
+    private static int WRAPPED = 2;
+    private static int DELIVERED = 3;
+    private int wrapping = UNWRAPPED;
+
+    // Retrieves/Changes the wrapping status
+    public int getWrapping() {
+        return wrapping;
+    }
+
+    public void startWrapping() {
+        this.wrapping = HALF_WRAPPED;
+    }
+
+    public void finishWrapping() {
+        this.wrapping = WRAPPED;
+    }
+
+    public void deliverMail() {
+        this.wrapping = DELIVERED;
+    }
+
     /**
      * Constructor for a MailItem
      * @param dest_floor the destination floor intended for this mail item

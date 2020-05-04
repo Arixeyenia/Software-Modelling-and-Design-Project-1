@@ -2,6 +2,10 @@ package automail;
 
 public class Caution {
 
+    public Caution(){
+
+    }
+
     /**
      * Checks whether there's another robot on the same floor
      * @param robotList a list of all active robots

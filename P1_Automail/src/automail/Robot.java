@@ -58,6 +58,12 @@ public class Robot {
         return current_floor;
     }
 
+    public MailItem getDeliveryItem(){ return this.deliveryItem; }
+
+    public int getDeliveryCounter(){ return this.deliveryCounter; }
+
+    public void incrementDeliveryCounter(){ this.deliveryCounter++; }
+
     /**
      * This is called on every time step
      * @throws ExcessiveDeliveryException if robot delivers more than the capacity of the tube without refilling
@@ -68,11 +74,7 @@ public class Robot {
     		case RETURNING:
     			/** If its current position is at the mailroom, then the robot should change state */
                 if(current_floor == Building.MAILROOM_LOCATION){
-                	if (tube != null) {
-                		mailPool.addToPool(tube);
-                        System.out.printf("T: %3d >  +addToPool [%s]%n", Clock.Time(), tube.toString());
-                        tube = null;
-                	}
+                    handleNotEmpty();
         			/** Tell the sorter the robot is ready */
         			mailPool.registerWaiting(this);
                 	changeState(RobotState.WAITING);
@@ -92,16 +94,10 @@ public class Robot {
                 break;
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
-                    /** Delivery complete, report this to the simulator! */
-                    delivery.deliver(deliveryItem);
-                    deliveryItem = null;
-                    deliveryCounter++;
-                    if(deliveryCounter > 2){  // Implies a simulation bug
-                    	throw new ExcessiveDeliveryException();
-                    }
+                    deliverMail();
                     /** Check if want to return, i.e. if there is no item in the tube*/
                     if(tube == null){
-                    	changeState(RobotState.RETURNING);
+                        changeState(RobotState.RETURNING);
                     }
                     else{
                         /** If there is another item, set the robot's route to the location to deliver the item */
@@ -119,6 +115,33 @@ public class Robot {
     }
 
     /**
+     * Deliver fragile item and handles wrapping and unwrapping
+     *
+     *
+     * @throws ExcessiveDeliveryException
+     */
+    public void deliverMail() throws ExcessiveDeliveryException {
+        /** Delivery complete, report this to the simulator! */
+        delivery.deliver(deliveryItem);
+        deliveryItem = null;
+        deliveryCounter++;
+        if(deliveryCounter > 2){  // Implies a simulation bug
+            throw new ExcessiveDeliveryException();
+        }
+    }
+
+    /**
+     * Handles situations if carriers are not empty
+     */
+    public void handleNotEmpty(){
+        if (tube != null) {
+            mailPool.addToPool(tube);
+            System.out.printf("T: %3d >  +addToPool [%s]%n", Clock.Time(), tube.toString());
+            tube = null;
+        }
+    }
+
+    /**
      * Sets the route for the robot
      */
     private void setRoute() {
@@ -130,7 +153,7 @@ public class Robot {
      * Generic function that moves the robot towards the destination
      * @param destination the floor towards which the robot is moving
      */
-    private void moveTowards(int destination) {
+    protected void moveTowards(int destination) {
         if(current_floor < destination){
             current_floor++;
         } else {
@@ -189,5 +212,7 @@ public class Robot {
 		tube = mailItem;
 		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
 	}
+
+
 
 }

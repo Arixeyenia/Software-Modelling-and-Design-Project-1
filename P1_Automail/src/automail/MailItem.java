@@ -21,10 +21,10 @@ public class MailItem {
     /** The fragile property */
     protected final boolean fragile;
 
-    private static int UNWRAPPED = 0;
-    private static int HALF_WRAPPED = 1;
-    private static int WRAPPED = 2;
-    private static int DELIVERED = 3;
+    public static final int UNWRAPPED = 0;
+    public static final int HALF_WRAPPED = 1;
+    public static final int WRAPPED = 2;
+    public static final int DELIVERED = 3;
     private int wrapping = UNWRAPPED;
 
     // Retrieves/Changes the wrapping status
@@ -39,6 +39,8 @@ public class MailItem {
     public void finishWrapping() {
         this.wrapping = WRAPPED;
     }
+
+    public void unwrap() { this.wrapping = UNWRAPPED; }
 
     public void deliverMail() {
         this.wrapping = DELIVERED;

@@ -90,6 +90,10 @@ public class Simulation {
 		assert(robots > 0);
 		// MailPool
 		IMailPool mailPool = new MailPool(robots);
+		Floor[] floors = new Floor[Building.FLOORS];
+		for (int i = 1; i <= Building.FLOORS; i++) {
+			floors[i] = new Floor(i);
+		}
 
 		// End properties
 		

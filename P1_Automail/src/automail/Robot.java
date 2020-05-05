@@ -64,6 +64,8 @@ public class Robot {
 
     public void incrementDeliveryCounter(){ this.deliveryCounter++; }
 
+    public IMailPool getMailPool() { return this.mailPool; }
+
     /**
      * This is called on every time step
      * @throws ExcessiveDeliveryException if robot delivers more than the capacity of the tube without refilling
@@ -128,6 +130,8 @@ public class Robot {
         if(deliveryCounter > 2){  // Implies a simulation bug
             throw new ExcessiveDeliveryException();
         }
+
+
     }
 
     /**

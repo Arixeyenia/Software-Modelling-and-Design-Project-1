@@ -5,6 +5,8 @@ import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 import strategies.IMailPool;
 
+import java.util.LinkedList;
+
 public class SpecialRobot extends Robot{
 
     // Special arm for fragile items
@@ -73,10 +75,10 @@ public class SpecialRobot extends Robot{
             deliveryItem = null;
         }
         else if (specialItem.fragile && deliveryItem == null){
-            if (specialItem.wrapping == specialItem.WRAPPED){
+            if (specialItem.getWrapping() == specialItem.WRAPPED){
                 specialItem.unwrap();
             }
-            else if (specialItem.wrapping == specialItem.UNWRAPPED){
+            else if (specialItem.getWrapping() == specialItem.UNWRAPPED){
                 this.delivery.deliver(specialItem);
                 specialItem = null;
             }
@@ -125,7 +127,14 @@ public class SpecialRobot extends Robot{
     @Override
     protected void moveTowards(int destination) {
         int current_floor = this.getCurrent_floor();
-        if(Math.abs(current_floor - destination) == 1 && Caution.checkFloor(destination) == true){
+
+        //Checks if when carrying fragile item, another robot is present on the floor
+        if(Math.abs(current_floor - destination) == 1 && checkFloor(destination) == true && getTube() == null && getDeliveryItem() == null){
+            return;
+        }
+
+        //Checks if when not carrying fragile item, another robot carrying fragile item is present on the floor
+        if(Math.abs(current_floor - destination) == 1 && checkFragileDelivery(destination) == true){
             return;
         }
         if(current_floor < destination){
@@ -133,5 +142,40 @@ public class SpecialRobot extends Robot{
         } else {
             current_floor--;
         }
+    }
+
+    /**
+     * As a robot carrying fragile item, checks whether there's another robot on the same floor
+     * @param destFloor the current floor of the robot
+     */
+    public boolean checkFloor(int destFloor){
+        LinkedList<Robot> robots = getMailPool().getRobots();
+
+        for(Robot robot : robots){
+            if (robot.getCurrent_floor() == destFloor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * As a robot not carrying fragile item, checks the floor to see whether another robot with fragile mail is going there
+     * @param destFloor the current floor of the robot
+     */
+    public boolean checkFragileDelivery(int destFloor){
+        LinkedList<Robot> robots = getMailPool().getRobots();
+
+        for(Robot robot : robots){
+            if (robot instanceof  SpecialRobot){
+                SpecialRobot specialRobot = (SpecialRobot) robot;
+                if (specialRobot.getCurrent_floor() == destFloor && specialRobot.getSpecialItem() != null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

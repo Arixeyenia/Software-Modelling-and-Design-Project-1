@@ -12,4 +12,5 @@ public class Building {
     /** Represents the mailroom location */
     public static final int MAILROOM_LOCATION = 1;
 
+
 }

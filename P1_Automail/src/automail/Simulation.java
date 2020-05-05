@@ -30,13 +30,53 @@ public class Simulation {
     private static ArrayList<MailItem> MAIL_DELIVERED;
     private static double total_score = 0;
 
-	/** Variables to be printed */
+    // Variables to be printed
 	private static int normal_packs = 0;
 	private static int caution_packs = 0;
 	private static int normal_weight = 0;
 	private static int caution_weight = 0;
 	private static int wrapping_time = 0;
 
+	// Getters and setters for the required printed variables
+	public int getNormal_packs() {
+		return normal_packs;
+	}
+
+	public void setNormal_packs(int normal_packs) {
+		this.normal_packs = normal_packs;
+	}
+
+	public int getCaution_packs() {
+		return caution_packs;
+	}
+
+	public void setCaution_packs(int caution_packs) {
+		this.caution_packs = caution_packs;
+	}
+
+	public int getNormal_weight() {
+		return normal_weight;
+	}
+
+	public void setNormal_weight(int normal_weight) {
+		this.normal_weight = normal_weight;
+	}
+
+	public int getCaution_weight() {
+		return caution_weight;
+	}
+
+	public void setCaution_weight(int caution_weight) {
+		this.caution_weight = caution_weight;
+	}
+
+	public int getWrapping_time() {
+		return wrapping_time;
+	}
+
+	public void setWrapping_time(int wrapping_time) {
+		this.wrapping_time = wrapping_time;
+	}
 
 	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     	Properties automailProperties = new Properties();
@@ -46,7 +86,7 @@ public class Simulation {
     	automailProperties.setProperty("Floors", "10");
     	automailProperties.setProperty("Mail_to_Create", "80");
     	automailProperties.setProperty("Last_Delivery_Time", "100");
-    	automailProperties.setProperty("Caution", "false");
+    	automailProperties.setProperty("Caution", "true");
     	automailProperties.setProperty("Fragile", "false");
     	automailProperties.setProperty("Statistics", "false");
 
@@ -90,10 +130,6 @@ public class Simulation {
 		assert(robots > 0);
 		// MailPool
 		IMailPool mailPool = new MailPool(robots);
-		Floor[] floors = new Floor[Building.FLOORS];
-		for (int i = 1; i <= Building.FLOORS; i++) {
-			floors[i] = new Floor(i);
-		}
 
 		// End properties
 		
@@ -145,6 +181,14 @@ public class Simulation {
                 System.out.printf("T: %3d > Deliv(%4d) [%s]%n", Clock.Time(), MAIL_DELIVERED.size(), deliveryItem.toString());
     			// Calculate delivery score
     			total_score += calculateDeliveryScore(deliveryItem);
+
+    			if (!deliveryItem.fragile) {
+					// Increment the number of normal packages delivered
+					normal_packs++;
+
+					// Increment the weight of normal packages delivered
+					normal_weight += deliveryItem.weight;
+				}
     		}
     		else{
     			try {
@@ -153,6 +197,8 @@ public class Simulation {
     				e.printStackTrace();
     			}
     		}
+
+
     	}
 
     }
@@ -164,7 +210,7 @@ public class Simulation {
         return Math.pow(Clock.Time() - deliveryItem.getArrivalTime(),penalty)*(1+Math.sqrt(priority_weight));
     }
 
-    public static void printResults(){
+    private static void printResults(){
         System.out.println("T: "+Clock.Time()+" | Simulation complete!");
         System.out.println("Final Delivery time: "+Clock.Time());
         System.out.printf("Final Score: %.2f%n", total_score);

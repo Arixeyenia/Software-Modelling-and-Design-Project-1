@@ -1,8 +1,6 @@
 package strategies;
 
-import automail.IMailDelivery;
-import automail.Robot;
-import automail.SpecialRobot;
+import automail.*;
 
 public class Automail {
 	      
@@ -24,5 +22,7 @@ public class Automail {
             for (int i = 0; i < numRobots; i++) robots[i] = new SpecialRobot(delivery, mailPool);
         }
     }
+
+
     
 }

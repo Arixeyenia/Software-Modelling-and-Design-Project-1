@@ -1,6 +1,5 @@
 package automail;
 
-import exceptions.BreakingFragileItemException;
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 import strategies.IMailPool;
@@ -58,7 +57,13 @@ public class SpecialRobot extends Robot{
 
     }
 
+    @Override
+    public boolean isEmpty() {
+        return (this.getDeliveryItem() == null && this.getTube() == null && specialItem == null);
+    }
 
+    @Override
+    public boolean handsFull() { return this.getDeliveryItem() != null && specialItem != null; }
 
     /**
      * Deliver fragile item and handles wrapping and unwrapping
@@ -68,18 +73,21 @@ public class SpecialRobot extends Robot{
      */
     @Override
     public void deliverMail() throws ExcessiveDeliveryException {
-        MailItem deliveryItem = this.getDeliveryItem();
-        if(deliveryItem != null){
+        if (this.getDeliveryItem() != null && this.getDestination_floor() == this.getDeliveryItem().destination_floor){
             /** Delivery complete, report this to the simulator! */
-            delivery.deliver(deliveryItem);
-            deliveryItem = null;
+            delivery.deliver(this.getDeliveryItem());
+            System.out.printf("T: %3d > %9s-> Deliver item %s%n", Clock.Time(), getIdTube(), this.getDeliveryItem().id);
+            this.setDeliveryItem(null);
         }
-        else if (specialItem.fragile && deliveryItem == null){
+        else if (specialItem != null && this.getDestination_floor() == this.specialItem.destination_floor){
             if (specialItem.getWrapping() == specialItem.WRAPPED){
                 specialItem.unwrap();
+                System.out.printf("T: %3d > %9s-> Unwrapping%n", Clock.Time(), getIdTube());
+                return;
             }
             else if (specialItem.getWrapping() == specialItem.UNWRAPPED){
                 this.delivery.deliver(specialItem);
+                System.out.printf("T: %3d > %9s-> Deliver special item %s%n", Clock.Time(), getIdTube(), specialItem.id);
                 specialItem = null;
             }
         }
@@ -91,32 +99,21 @@ public class SpecialRobot extends Robot{
 
     @Override
     public void addToHand(MailItem mailItem) throws ItemTooHeavyException{
-        MailItem deliveryItem = this.getDeliveryItem();
-        assert(deliveryItem == null);
         if (mailItem.fragile){
+            assert(this.specialItem == null);
+            if (specialItem != null){
+                return;
+            }
             specialItem = mailItem;
             if (specialItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
         else{
-            deliveryItem = mailItem;
-            if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
-        }
-    }
-
-    /**
-     * Handles situations if carriers are not empty
-     * Override from Robot
-     */
-    @Override
-    public void handleNotEmpty(){
-        super.handleNotEmpty();
-        if (specialItem != null) {
-            if (specialItem.getWrapping() == specialItem.UNWRAPPED){
-                specialItem.startWrapping();
+            assert(this.getDeliveryItem() == null);
+            if (this.getDeliveryItem() != null){
+                return;
             }
-            else if(specialItem.getWrapping() == specialItem.HALF_WRAPPED){
-                specialItem.finishWrapping();
-            }
+            this.setDeliveryItem(mailItem);
+            if (this.getDeliveryItem().weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
     }
 
@@ -126,21 +123,20 @@ public class SpecialRobot extends Robot{
      */
     @Override
     protected void moveTowards(int destination) {
-        int current_floor = this.getCurrent_floor();
 
         //Checks if when carrying fragile item, another robot is present on the floor
-        if(Math.abs(current_floor - destination) == 1 && checkFloor(destination) == true && getTube() == null && getDeliveryItem() == null){
+        if(Math.abs(this.getCurrent_floor() - destination) == 1 && checkFloor(destination) == true && getTube() == null && getDeliveryItem() == null){
             return;
         }
 
         //Checks if when not carrying fragile item, another robot carrying fragile item is present on the floor
-        if(Math.abs(current_floor - destination) == 1 && checkFragileDelivery(destination) == true){
+        if(Math.abs(this.getCurrent_floor() - destination) == 1 && checkFragileDelivery(destination) == true){
             return;
         }
-        if(current_floor < destination){
-            current_floor++;
+        if(this.getCurrent_floor() < destination){
+            this.setCurrent_floor(this.getCurrent_floor()+1);
         } else {
-            current_floor--;
+            this.setCurrent_floor(this.getCurrent_floor()-1);
         }
     }
 
@@ -177,5 +173,55 @@ public class SpecialRobot extends Robot{
         }
 
         return false;
+    }
+
+    @Override
+    protected void setRoute(){
+        if (this.getDeliveryItem() != null) {
+            this.setDestination_floor(this.getDeliveryItem().destination_floor);
+        }
+        else if (specialItem != null) {
+            this.setDestination_floor(specialItem.destination_floor);
+        }
+    }
+
+    @Override
+    //String to print when robot is delivering
+    public void printDelivery() {
+        super.printDelivery();
+        if (specialItem != null && this.getDeliveryItem() == null){
+            System.out.printf("T: %3d > %9s-> [%s]%n", Clock.Time(), getIdTube(), specialItem.toString());
+        }
+    }
+
+    @Override
+    //Planning for delivery
+    protected void handlePreDelivery(){
+        if (specialItem != null) {
+            if (specialItem.getWrapping() == specialItem.UNWRAPPED){
+                specialItem.startWrapping();
+                System.out.printf("T: %3d > %9s-> Starting wrapping%n", Clock.Time(), getIdTube());
+            }
+            else if(specialItem.getWrapping() == specialItem.HALF_WRAPPED){
+                specialItem.finishWrapping();
+                System.out.printf("T: %3d > %9s-> Finish wrapping%n", Clock.Time(), getIdTube());
+            }
+        }
+
+        /**Set route if:
+            - There is delivery item and either:
+                - No special item or
+                - The special item is fully wrapped
+
+            Will not set route if:
+                - There is no delivery item
+                - Special item is not properly wrapped
+         */
+        if(getDeliveryItem() != null || specialItem != null) {
+            if(specialItem != null && specialItem.getWrapping() == specialItem.WRAPPED){
+                setRoute();
+                this.current_state = RobotState.DELIVERING;
+            }
+        }
     }
 }

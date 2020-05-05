@@ -1,9 +1,6 @@
 package automail;
 
-import exceptions.BreakingFragileItemException;
-import exceptions.ExcessiveDeliveryException;
-import exceptions.ItemTooHeavyException;
-import exceptions.MailAlreadyDeliveredException;
+import exceptions.*;
 import strategies.Automail;
 import strategies.IMailPool;
 import strategies.MailPool;
@@ -182,12 +179,21 @@ public class Simulation {
     			// Calculate delivery score
     			total_score += calculateDeliveryScore(deliveryItem);
 
-    			if (!deliveryItem.fragile) {
-					// Increment the number of normal packages delivered
-					normal_packs++;
+    			if (STATISTICS_ENABLED) {
+					if (!deliveryItem.fragile) {
+						// Increment the number of normal packages delivered
+						normal_packs++;
 
-					// Increment the weight of normal packages delivered
-					normal_weight += deliveryItem.weight;
+						// Increment the weight of normal packages delivered
+						normal_weight += deliveryItem.weight;
+					}
+					else if (deliveryItem.fragile){
+						// Increment the number of caution packages delivered
+						caution_packs++;
+
+						// Increment the weight of normal packages delivered
+						caution_weight += deliveryItem.weight;
+					}
 				}
     		}
     		else{

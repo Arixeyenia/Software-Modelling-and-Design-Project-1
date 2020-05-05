@@ -1,6 +1,5 @@
 package strategies;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.ListIterator;
@@ -60,24 +59,34 @@ public class MailPool implements IMailPool {
         } 
 	}
 	
-	private void loadRobot(ListIterator<Robot> i) throws ItemTooHeavyException, BreakingFragileItemException {
+	private void loadRobot(ListIterator<Robot> i) throws ItemTooHeavyException, BreakingFragileItemException{
 		Robot robot = i.next();
 		assert(robot.isEmpty());
 		// System.out.printf("P: %3d%n", pool.size());
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
-			robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
-			j.remove();
-			if (pool.size() > 0) {
-				robot.addToTube(j.next().mailItem);
+				while (!robot.handsFull() && j.hasNext()) {
+					robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
+				}
+				//Issue is the j will keep iterating until both hands are filled. But only the item that is put in hands 2nd will be removed
 				j.remove();
-			}
-			robot.dispatch(); // send the robot off if it has any items to deliver
-			i.remove();       // remove from mailPool queue
-			} catch (Exception e) { 
-	            throw e; 
-	        } 
+				if (pool.size() > 0) {
+					while(robot.getTube() == null && j.hasNext()){
+						try {
+							robot.addToTube(j.next().mailItem);
+						}
+						catch (BreakingFragileItemException e){
+							System.out.println("Fragile item being added to tube");
+						}
+					}
+					j.remove();
+				}
+				robot.dispatch(); // send the robot off if it has any items to deliver
+				i.remove();       // remove from mailPool queue
+			} catch (Exception e) {
+	            throw e;
+	        }
 		}
 	}
 

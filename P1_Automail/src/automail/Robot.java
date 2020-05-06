@@ -219,7 +219,7 @@ public class Robot {
 		return (deliveryItem == null && tube == null);
 	}
 
-	public boolean handsFull() { return deliveryItem == null; }
+	public boolean handsFull() { return deliveryItem != null; }
 
 	public void addToHand(MailItem mailItem) throws ItemTooHeavyException, BreakingFragileItemException {
 		assert(deliveryItem == null);
@@ -233,8 +233,17 @@ public class Robot {
 		if(mailItem.fragile) throw new BreakingFragileItemException();
 		tube = mailItem;
 		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+        System.out.println("----------------------------------------- I GOT ITEM " + mailItem.id + " ---------------------------------------------");
 	}
 
-
+	//Check if the mail item is in hands
+    public boolean itemIsInHands(String id) {
+	    if (deliveryItem.id.equals(id)){
+	        return true;
+        }
+	    else {
+	        return false;
+        }
+    }
 
 }

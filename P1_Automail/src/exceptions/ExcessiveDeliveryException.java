@@ -5,6 +5,6 @@ package exceptions;
  */
 public class ExcessiveDeliveryException extends Throwable {
 	public ExcessiveDeliveryException(){
-		super("Attempting to deliver more than 2 items in a single trip!!");
+		super("Attempting to deliver more than 3 items in a single trip!!");
 	}
 }

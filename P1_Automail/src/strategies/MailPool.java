@@ -33,7 +33,7 @@ public class MailPool implements IMailPool {
 			return order;
 		}
 	}
-	
+		
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
 
@@ -66,9 +66,13 @@ public class MailPool implements IMailPool {
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
-					robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
-				//Issue is the j will keep iterating until both hands are filled. But only the item that is put in hands 2nd will be removed
-				j.remove();
+				while (!robot.handsFull() && j.hasNext()) {
+					MailItem mailItem = j.next().mailItem;
+					robot.addToHand(mailItem); // hand first as we want higher priority delivered first
+					if (robot.itemIsInHands(mailItem.getId())){
+						j.remove();
+					}
+				}
 				if (pool.size() > 0) {
 					while(robot.getTube() == null && j.hasNext()){
 						try {

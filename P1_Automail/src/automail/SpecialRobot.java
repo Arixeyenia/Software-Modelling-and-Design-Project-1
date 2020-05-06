@@ -115,6 +115,7 @@ public class SpecialRobot extends Robot{
             this.setDeliveryItem(mailItem);
             if (this.getDeliveryItem().weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
+        System.out.println("----------------------------------------- I GOT ITEM " + mailItem.id + " ---------------------------------------------");
     }
 
     /**
@@ -218,9 +219,23 @@ public class SpecialRobot extends Robot{
                 - There is no delivery item
                 - Special item is not properly wrapped
          */
-        if(getDeliveryItem() != null || specialItem != null && specialItem.getWrapping() == specialItem.WRAPPED) {
-                setRoute();
-                this.current_state = RobotState.DELIVERING;
+        if (specialItem != null && specialItem.getWrapping() != specialItem.WRAPPED){
+            return;
+        }
+        if(getDeliveryItem() != null || specialItem != null) {
+            setRoute();
+            this.current_state = RobotState.DELIVERING;
+        }
+    }
+
+    @Override
+    //Check if the mail item is in hands
+    public boolean itemIsInHands(String id) {
+        if (this.getDeliveryItem() != null && this.getDeliveryItem().id.equals(id) || this.specialItem != null && specialItem.id.equals(id)){
+            return true;
+        }
+        else {
+            return false;
         }
     }
 }

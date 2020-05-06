@@ -129,6 +129,7 @@ public class SpecialRobot extends Robot{
             return;
         }
 
+        //Cater to mailroom
         //Checks if when not carrying fragile item, another robot carrying fragile item is present on the floor
         if(Math.abs(this.getCurrent_floor() - destination) == 1 && checkFragileDelivery(destination) == true){
             return;
@@ -217,11 +218,9 @@ public class SpecialRobot extends Robot{
                 - There is no delivery item
                 - Special item is not properly wrapped
          */
-        if(getDeliveryItem() != null || specialItem != null) {
-            if(specialItem != null && specialItem.getWrapping() == specialItem.WRAPPED){
+        if(getDeliveryItem() != null || specialItem != null && specialItem.getWrapping() == specialItem.WRAPPED) {
                 setRoute();
                 this.current_state = RobotState.DELIVERING;
-            }
         }
     }
 }

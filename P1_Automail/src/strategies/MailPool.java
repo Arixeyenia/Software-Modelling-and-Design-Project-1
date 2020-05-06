@@ -66,9 +66,7 @@ public class MailPool implements IMailPool {
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
-				while (!robot.handsFull() && j.hasNext()) {
 					robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
-				}
 				//Issue is the j will keep iterating until both hands are filled. But only the item that is put in hands 2nd will be removed
 				j.remove();
 				if (pool.size() > 0) {

@@ -82,12 +82,10 @@ public class SpecialRobot extends Robot{
         else if (specialItem != null && this.getDestination_floor() == this.specialItem.destination_floor){
             if (specialItem.getWrapping() == specialItem.WRAPPED){
                 specialItem.unwrap();
-                System.out.printf("T: %3d > %9s-> Unwrapping%n", Clock.Time(), getIdTube());
                 return;
             }
             else if (specialItem.getWrapping() == specialItem.UNWRAPPED){
                 this.delivery.deliver(specialItem);
-                System.out.printf("T: %3d > %9s-> Deliver special item %s%n", Clock.Time(), getIdTube(), specialItem.id);
                 specialItem = null;
             }
         }
@@ -115,8 +113,7 @@ public class SpecialRobot extends Robot{
             this.setDeliveryItem(mailItem);
             if (this.getDeliveryItem().weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
-        System.out.println("----------------------------------------- I GOT ITEM " + mailItem.id + " ---------------------------------------------");
-    }
+        }
 
     /**
      * Generic function that moves the robot towards the destination
@@ -202,12 +199,10 @@ public class SpecialRobot extends Robot{
         if (specialItem != null) {
             if (specialItem.getWrapping() == specialItem.UNWRAPPED){
                 specialItem.startWrapping();
-                System.out.printf("T: %3d > %9s-> Starting wrapping%n", Clock.Time(), getIdTube());
-            }
+                }
             else if(specialItem.getWrapping() == specialItem.HALF_WRAPPED){
                 specialItem.finishWrapping();
-                System.out.printf("T: %3d > %9s-> Finish wrapping%n", Clock.Time(), getIdTube());
-            }
+                }
         }
 
         /**Set route if:

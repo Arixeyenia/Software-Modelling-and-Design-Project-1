@@ -193,6 +193,8 @@ public class Simulation {
 
 						// Increment the weight of normal packages delivered
 						caution_weight += deliveryItem.weight;
+
+						wrapping_time += 3;
 					}
 				}
     		}
@@ -221,11 +223,13 @@ public class Simulation {
         System.out.println("Final Delivery time: "+Clock.Time());
         System.out.printf("Final Score: %.2f%n", total_score);
 
-        // Stats required to print
-		System.out.printf("Number of packages delivered normally: %d%n", normal_packs);
-		System.out.printf("Number of packages delivered using caution: %d%n", caution_packs);
-		System.out.printf("Total weight of packages delivered normally: %d%n", normal_weight);
-		System.out.printf("Total weight of packages delivered using caution: %d%n", caution_weight);
-		System.out.printf("Total time spent wrapping and unwrapping: %d%n", wrapping_time);
+        if (STATISTICS_ENABLED) {
+			// Stats required to print
+			System.out.printf("Number of packages delivered normally: %d%n", normal_packs);
+			System.out.printf("Number of packages delivered using caution: %d%n", caution_packs);
+			System.out.printf("Total weight of packages delivered normally: %d%n", normal_weight);
+			System.out.printf("Total weight of packages delivered using caution: %d%n", caution_weight);
+			System.out.printf("Total time spent wrapping and unwrapping: %d%n", wrapping_time);
+		}
     }
 }

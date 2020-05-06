@@ -104,7 +104,7 @@ public class Robot {
                     deliveryCounter = 0; // reset delivery counter
                     handlePreDelivery();
                 }
-                else if (!receivedDispatch){
+                else if (!receivedDispatch && !isEmpty()){
                     handlePreDelivery();
                 }
                 break;
@@ -233,8 +233,7 @@ public class Robot {
 		if(mailItem.fragile) throw new BreakingFragileItemException();
 		tube = mailItem;
 		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
-        System.out.println("----------------------------------------- I GOT ITEM " + mailItem.id + " ---------------------------------------------");
-	}
+        }
 
 	//Check if the mail item is in hands
     public boolean itemIsInHands(String id) {
@@ -246,4 +245,12 @@ public class Robot {
         }
     }
 
+    public boolean itemIsInTube(String id) {
+	    if (tube.id.equals(id)){
+	        return true;
+        }
+	    else {
+	        return false;
+        }
+    }
 }

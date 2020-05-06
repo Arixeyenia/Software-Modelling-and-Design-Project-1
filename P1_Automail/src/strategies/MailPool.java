@@ -33,14 +33,18 @@ public class MailPool implements IMailPool {
 			return order;
 		}
 	}
-		
+
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
+
+	//TODO: REMOVE
+	private int counter;
 
 	public MailPool(int nrobots){
 		// Start empty
 		pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
+		counter = 0;
 	}
 
 	public void addToPool(MailItem mailItem) {
@@ -71,18 +75,23 @@ public class MailPool implements IMailPool {
 					robot.addToHand(mailItem); // hand first as we want higher priority delivered first
 					if (robot.itemIsInHands(mailItem.getId())){
 						j.remove();
+						counter++;
 					}
 				}
 				if (pool.size() > 0) {
 					while(robot.getTube() == null && j.hasNext()){
 						try {
-							robot.addToTube(j.next().mailItem);
+							MailItem mailItem = j.next().mailItem;
+							robot.addToTube(mailItem);
+							if (robot.itemIsInTube(mailItem.getId())){
+								j.remove();
+								break;
+							}
 						}
 						catch (BreakingFragileItemException e){
-							System.out.println("Fragile item being added to tube");
+							System.out.println(e.getMessage());
 						}
 					}
-					j.remove();
 				}
 				robot.dispatch(); // send the robot off if it has any items to deliver
 				i.remove();       // remove from mailPool queue

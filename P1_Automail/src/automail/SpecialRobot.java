@@ -17,7 +17,6 @@ public class SpecialRobot extends Robot{
      *
      * @param delivery  governs the final delivery
      * @param mailPool  is the source of mail items
-     * @param behaviour governs selection of mail items for delivery and behaviour on priority arrivals
      */
     public SpecialRobot(IMailDelivery delivery, IMailPool mailPool) {
         super(delivery, mailPool);
@@ -82,6 +81,7 @@ public class SpecialRobot extends Robot{
         else if (specialItem != null && this.getDestination_floor() == this.specialItem.destination_floor){
             if (specialItem.getWrapping() == specialItem.WRAPPED){
                 specialItem.unwrap();
+                System.out.println(" -----------------------UNWRAPPING " + specialItem.id + " ON LEVEL " + specialItem.destination_floor);
                 return;
             }
             else if (specialItem.getWrapping() == specialItem.UNWRAPPED){
@@ -124,12 +124,14 @@ public class SpecialRobot extends Robot{
 
         //Checks if when carrying fragile item, another robot is present on the floor
         if(Math.abs(this.getCurrent_floor() - destination) == 1 && checkFloor(destination) == true && getTube() == null && getDeliveryItem() == null){
+            System.out.println("THERE IS ANOTHER");
             return;
         }
 
         //Cater to mailroom
         //Checks if when not carrying fragile item, another robot carrying fragile item is present on the floor
         if(Math.abs(this.getCurrent_floor() - destination) == 1 && checkFragileDelivery(destination) == true){
+            System.out.println("THERE IS ANOTHER PT 2");
             return;
         }
         if(this.getCurrent_floor() < destination){
@@ -163,7 +165,7 @@ public class SpecialRobot extends Robot{
         LinkedList<Robot> robots = getMailPool().getRobots();
 
         for(Robot robot : robots){
-            if (robot instanceof  SpecialRobot){
+            if (robot instanceof SpecialRobot){
                 SpecialRobot specialRobot = (SpecialRobot) robot;
                 if (specialRobot.getCurrent_floor() == destFloor && specialRobot.getSpecialItem() != null) {
                     return true;
@@ -199,10 +201,11 @@ public class SpecialRobot extends Robot{
         if (specialItem != null) {
             if (specialItem.getWrapping() == specialItem.UNWRAPPED){
                 specialItem.startWrapping();
-                }
+                this.dispatch();
+            }
             else if(specialItem.getWrapping() == specialItem.HALF_WRAPPED){
                 specialItem.finishWrapping();
-                }
+            }
         }
 
         /**Set route if:

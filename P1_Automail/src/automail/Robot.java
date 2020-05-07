@@ -33,12 +33,9 @@ public class Robot {
     /**
      * Initiates the robot's location at the start to be at the mailroom
      * also set it to be waiting for mail.
-     * @param behaviour governs selection of mail items for delivery and behaviour on priority arrivals
      * @param delivery governs the final delivery
      * @param mailPool is the source of mail items
      */
-    // TODO: IMPLEMENT BEHAVIOUR (AS ENUM?)
-    // PRIOROTISE NON FRAGILE ITEMS SO THEY DONT HAVE TO WAIT FOR THE FRAGILE ITEM TO BE DELIVERED
     public Robot(IMailDelivery delivery, IMailPool mailPool){
     	id = "R" + hashCode();
         // current_state = RobotState.WAITING;
@@ -102,9 +99,6 @@ public class Robot {
                 if(!isEmpty() && receivedDispatch){
                     receivedDispatch = false;
                     deliveryCounter = 0; // reset delivery counter
-                    handlePreDelivery();
-                }
-                else if (!receivedDispatch && !isEmpty()){
                     handlePreDelivery();
                 }
                 break;

@@ -21,13 +21,16 @@ public class MailItem {
     /** The fragile property */
     protected final boolean fragile;
 
+    /** Constants to represent the wrapping stage of fragile items */
     public static final int UNWRAPPED = 0;
     public static final int HALF_WRAPPED = 1;
     public static final int WRAPPED = 2;
     public static final int DELIVERED = 3;
+
+    /** variable to represent the wrapping stage of an instance of fragile item */
     private int wrapping = UNWRAPPED;
 
-    // Retrieves/Changes the wrapping status
+    // This block of code retrieves/changes the wrapping status
     public int getWrapping() {
         return wrapping;
     }

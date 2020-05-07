@@ -37,14 +37,10 @@ public class MailPool implements IMailPool {
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
 
-	//TODO: REMOVE
-	private int counter;
-
 	public MailPool(int nrobots){
 		// Start empty
 		pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
-		counter = 0;
 	}
 
 	public void addToPool(MailItem mailItem) {
@@ -70,15 +66,16 @@ public class MailPool implements IMailPool {
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
+				// Added code to ensure that hands will be full
 				while (!robot.handsFull() && j.hasNext()) {
 					MailItem mailItem = j.next().mailItem;
 					robot.addToHand(mailItem); // hand first as we want higher priority delivered first
 					if (robot.itemIsInHands(mailItem.getId())){
 						j.remove();
-						counter++;
 					}
 				}
 				if (pool.size() > 0) {
+					// Ensures that item added to tube is not fragile
 					while(robot.getTube() == null && j.hasNext()){
 						try {
 							MailItem mailItem = j.next().mailItem;
@@ -104,10 +101,5 @@ public class MailPool implements IMailPool {
 	@Override
 	public void registerWaiting(Robot robot) { // assumes won't be there already
 		robots.add(robot);
-	}
-
-	@Override
-	public LinkedList<Robot> getRobots(){
-		return (LinkedList<Robot>) this.robots.clone();
 	}
 }

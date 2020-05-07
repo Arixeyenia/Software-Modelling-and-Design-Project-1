@@ -33,15 +33,13 @@ public class Robot {
     /**
      * Initiates the robot's location at the start to be at the mailroom
      * also set it to be waiting for mail.
-     * @param behaviour governs selection of mail items for delivery and behaviour on priority arrivals
      * @param delivery governs the final delivery
      * @param mailPool is the source of mail items
      */
-    // TODO: IMPLEMENT BEHAVIOUR (AS ENUM?)
     // PRIOROTISE NON FRAGILE ITEMS SO THEY DONT HAVE TO WAIT FOR THE FRAGILE ITEM TO BE DELIVERED
     public Robot(IMailDelivery delivery, IMailPool mailPool){
     	id = "R" + hashCode();
-        // current_state = RobotState.WAITING;
+
     	current_state = RobotState.RETURNING;
         current_floor = Building.MAILROOM_LOCATION;
         this.delivery = delivery;
@@ -68,11 +66,34 @@ public class Robot {
 
     public void incrementDeliveryCounter(){ this.deliveryCounter++; }
 
-    public IMailPool getMailPool() { return this.mailPool; }
-
     public int getDestination_floor() { return this.destination_floor; }
 
     public void setDestination_floor(int destination_floor) { this.destination_floor = destination_floor; }
+
+    public MailItem getTube() { return tube; }
+
+    public boolean isEmpty() { return (deliveryItem == null && tube == null); }
+
+    public boolean handsFull() { return deliveryItem != null; }
+
+    //Check if the mail item is in hands
+    public boolean itemIsInHands(String id) {
+        if (deliveryItem.id.equals(id)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean itemIsInTube(String id) {
+        if (tube.id.equals(id)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     /**
      * This is called on every time step
@@ -104,9 +125,6 @@ public class Robot {
                     deliveryCounter = 0; // reset delivery counter
                     handlePreDelivery();
                 }
-                else if (!receivedDispatch && !isEmpty()){
-                    handlePreDelivery();
-                }
                 break;
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
@@ -131,12 +149,12 @@ public class Robot {
     }
 
     /**
-     * Deliver fragile item and handles wrapping and unwrapping
-     *
+     * Deliver items
+     * Handles everything related to delivery
      *
      * @throws ExcessiveDeliveryException
      */
-    public void deliverMail() throws ExcessiveDeliveryException {
+    protected void deliverMail() throws ExcessiveDeliveryException {
         /** Delivery complete, report this to the simulator! */
         delivery.deliver(deliveryItem);
         deliveryItem = null;
@@ -144,11 +162,12 @@ public class Robot {
         if(deliveryCounter > 2){  // Implies a simulation bug
             throw new ExcessiveDeliveryException();
         }
-
-
     }
 
-    //Planning for delivery
+    /**
+     * Planning for delivery
+     * Handles things required before a delivery
+     */
     protected void handlePreDelivery(){
         setRoute();
         changeState(RobotState.DELIVERING);
@@ -193,16 +212,14 @@ public class Robot {
     	}
     }
 
-    //String to print when robot is delivering
+    /**
+     * String to print when robot is delivering
+     */
     public void printDelivery() {
         if (this.getDeliveryItem() != null){
             System.out.printf("T: %3d > %9s-> [%s]%n", Clock.Time(), getIdTube(), deliveryItem.toString());
         }
     }
-
-	public MailItem getTube() {
-		return tube;
-	}
     
 	static private int count = 0;
 	static private Map<Integer, Integer> hashMap = new TreeMap<Integer, Integer>();
@@ -214,12 +231,6 @@ public class Robot {
 		if (hash == null) { hash = count++; hashMap.put(hash0, hash); }
 		return hash;
 	}
-
-	public boolean isEmpty() {
-		return (deliveryItem == null && tube == null);
-	}
-
-	public boolean handsFull() { return deliveryItem != null; }
 
 	public void addToHand(MailItem mailItem) throws ItemTooHeavyException, BreakingFragileItemException {
 		assert(deliveryItem == null);
@@ -234,23 +245,4 @@ public class Robot {
 		tube = mailItem;
 		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
-
-	//Check if the mail item is in hands
-    public boolean itemIsInHands(String id) {
-	    if (deliveryItem.id.equals(id)){
-	        return true;
-        }
-	    else {
-	        return false;
-        }
-    }
-
-    public boolean itemIsInTube(String id) {
-	    if (tube.id.equals(id)){
-	        return true;
-        }
-	    else {
-	        return false;
-        }
-    }
 }

@@ -30,6 +30,4 @@ public interface IMailPool {
      * @param robot refers to a robot which has arrived back ready for more mailItems to deliver
      */	
 	void registerWaiting(Robot robot);
-
-	LinkedList<Robot> getRobots();
 }

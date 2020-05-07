@@ -24,7 +24,6 @@ public class MailItem {
     public static final int UNWRAPPED = 0;
     public static final int HALF_WRAPPED = 1;
     public static final int WRAPPED = 2;
-    public static final int DELIVERED = 3;
     private int wrapping = UNWRAPPED;
 
     // Retrieves/Changes the wrapping status
@@ -33,18 +32,23 @@ public class MailItem {
     }
 
     public void startWrapping() {
-        this.wrapping = HALF_WRAPPED;
+        if (fragile) {
+            this.wrapping = HALF_WRAPPED;
+        }
     }
 
     public void finishWrapping() {
-        this.wrapping = WRAPPED;
+        if (fragile) {
+            this.wrapping = WRAPPED;
+        }
     }
 
-    public void unwrap() { this.wrapping = UNWRAPPED; }
-
-    public void deliverMail() {
-        this.wrapping = DELIVERED;
+    public void unwrap() {
+        if (fragile) {
+            this.wrapping = UNWRAPPED;
+        }
     }
+
 
     /**
      * Constructor for a MailItem

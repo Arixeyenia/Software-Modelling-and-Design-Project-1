@@ -121,9 +121,9 @@ public class SpecialRobot extends Robot{
      */
     @Override
     protected void moveTowards(int destination) {
-
         //Checks if when carrying fragile item, another robot is present on the floor
-        if(Math.abs(this.getCurrent_floor() - destination) == 1 && checkFloor(destination) == true && getTube() == null && getDeliveryItem() == null){
+        if( Math.abs(this.getCurrent_floor() - destination) == 1 && checkFloor(destination) && this.specialItem != null && getTube() == null && getDeliveryItem() == null ){
+            System.out.println("check alone <" + this.id+ "| current floor:"+ this.getCurrent_floor()+ "|state: " + this.current_state.toString()+ "> destination: " + destination + " |special item:" + this.specialItem);
             return;
         }
 
@@ -144,14 +144,15 @@ public class SpecialRobot extends Robot{
      * @param destFloor the current floor of the robot
      */
     public boolean checkFloor(int destFloor){
-        LinkedList<Robot> robots = getMailPool().getRobots();
-
+//        LinkedList<Robot> robots = getMailPool().getRobots();
+        LinkedList<Robot> robots = RobotManager.getInstance().getRobots();
         for(Robot robot : robots){
+
+            // if you found a robot in the same floor
             if (robot.getCurrent_floor() == destFloor) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -160,16 +161,17 @@ public class SpecialRobot extends Robot{
      * @param destFloor the current floor of the robot
      */
     public boolean checkFragileDelivery(int destFloor){
-        LinkedList<Robot> robots = getMailPool().getRobots();
-
+        LinkedList<Robot> robots = RobotManager.getInstance().getRobots();
         for(Robot robot : robots){
-            if (robot instanceof  SpecialRobot){
+            if (robot instanceof SpecialRobot){
                 SpecialRobot specialRobot = (SpecialRobot) robot;
-                if (specialRobot.getCurrent_floor() == destFloor && specialRobot.getSpecialItem() != null) {
+                if (specialRobot.getCurrent_floor() == destFloor  && specialRobot.getTube() == null && specialRobot.getDeliveryItem() == null && specialItem != null && specialRobot.id != this.id) {
+                    System.out.println("current floor: " + getCurrent_floor() + " specialR: " + specialRobot.id);
                     return true;
                 }
             }
         }
+
 
         return false;
     }

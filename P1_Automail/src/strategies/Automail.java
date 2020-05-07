@@ -21,6 +21,7 @@ public class Automail {
         } else {
             for (int i = 0; i < numRobots; i++) robots[i] = new SpecialRobot(delivery, mailPool);
         }
+    	RobotManager.getInstance().addRobots(robots);
     }
 
 

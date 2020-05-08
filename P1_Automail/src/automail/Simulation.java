@@ -156,8 +156,8 @@ public class Simulation {
             mailGenerator.step();
             try {
                 automail.mailPool.step();
-				for (int i=0; i<robots; i++) {
-					automail.robots[i].step();
+				for (Robot robot: RobotManager.getInstance().getRobots()) {
+					robot.step();
 				}
 			} catch (ExcessiveDeliveryException|ItemTooHeavyException|BreakingFragileItemException e) {
 				e.printStackTrace();

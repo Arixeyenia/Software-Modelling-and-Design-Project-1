@@ -3,8 +3,7 @@ package strategies;
 import automail.*;
 
 public class Automail {
-	      
-    public Robot[] robots;
+
     public IMailPool mailPool;
     
     public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots, boolean caution) {
@@ -15,7 +14,7 @@ public class Automail {
     	this.mailPool = mailPool;
     	
     	/** Initialize robots */
-    	robots = new Robot[numRobots];
+    	Robot[] robots = new Robot[numRobots];
     	if (!caution) {
     	    for (int i = 0; i < numRobots; i++) robots[i] = new Robot(delivery, mailPool);
         } else {

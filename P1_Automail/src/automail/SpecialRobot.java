@@ -6,7 +6,7 @@ import strategies.IMailPool;
 
 import java.util.LinkedList;
 
-public class SpecialRobot extends Robot implements ISpecialRobot{
+public class SpecialRobot extends Robot implements ICaution{
 
     // Special arm for fragile items
     private MailItem specialItem = null;

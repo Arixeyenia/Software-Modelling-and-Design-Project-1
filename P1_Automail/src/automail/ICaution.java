@@ -2,7 +2,7 @@ package automail;
 
 import exceptions.ItemTooHeavyException;
 
-public interface ISpecialRobot {
+public interface ICaution {
 
     /**
      * Handle wrapping of fragile items when first received

@@ -34,47 +34,6 @@ public class Simulation {
 	private static int caution_weight = 0;
 	private static int wrapping_time = 0;
 
-	// Getters and setters for the required printed variables
-	public int getNormal_packs() {
-		return normal_packs;
-	}
-
-	public void setNormal_packs(int normal_packs) {
-		this.normal_packs = normal_packs;
-	}
-
-	public int getCaution_packs() {
-		return caution_packs;
-	}
-
-	public void setCaution_packs(int caution_packs) {
-		this.caution_packs = caution_packs;
-	}
-
-	public int getNormal_weight() {
-		return normal_weight;
-	}
-
-	public void setNormal_weight(int normal_weight) {
-		this.normal_weight = normal_weight;
-	}
-
-	public int getCaution_weight() {
-		return caution_weight;
-	}
-
-	public void setCaution_weight(int caution_weight) {
-		this.caution_weight = caution_weight;
-	}
-
-	public int getWrapping_time() {
-		return wrapping_time;
-	}
-
-	public void setWrapping_time(int wrapping_time) {
-		this.wrapping_time = wrapping_time;
-	}
-
 	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     	Properties automailProperties = new Properties();
 		// Default properties

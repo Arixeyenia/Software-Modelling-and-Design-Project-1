@@ -54,7 +54,7 @@ public class SpecialRobot extends Robot implements ICaution{
      */
     public boolean itemIsInHands(String id) {
         if (this.getDeliveryItem() != null && this.getDeliveryItem().id.equals(id)
-                || this.specialItem != null && specialItem.id.equals(id)){
+                || this.specialItem != null && specialItem.getId().equals(id)){
             return true;
         }
         else {
@@ -81,7 +81,7 @@ public class SpecialRobot extends Robot implements ICaution{
             this.setDeliveryItem(null);
         }
         // If item to be delivered is fragile
-        else if (specialItem != null && this.getDestination_floor() == this.specialItem.destination_floor){
+        else if (specialItem != null && this.getDestination_floor() == this.specialItem.getDestFloor()){
 
             if (specialItem.getWrapping() != MailItem.UNWRAPPED){
                 handleUnwrapping();
@@ -89,7 +89,7 @@ public class SpecialRobot extends Robot implements ICaution{
             }
 
             // If item is already unwrapped and ready to deliver, deliver and end delivery
-            if (specialItem.getWrapping() == specialItem.UNWRAPPED){
+            if (specialItem.getWrapping() == MailItem.UNWRAPPED){
                 this.delivery.deliver(specialItem);
                 specialItem = null;
             }
@@ -103,21 +103,14 @@ public class SpecialRobot extends Robot implements ICaution{
 
     public void handleWrapping(){
         if (this.getCurrent_floor() == Building.MAILROOM_LOCATION && this.specialItem != null) {
-            if (specialItem.getWrapping() == MailItem.UNWRAPPED){
-                specialItem.startWrapping();
-            }
-            else if (specialItem.getWrapping() == MailItem.HALF_WRAPPED) {
-                specialItem.finishWrapping();
-            }
+            this.specialItem.wrap();
             this.dispatch();
         }
     }
 
     public void handleUnwrapping() {
         if (this.getCurrent_floor() == this.getDestination_floor() && this.specialItem != null){
-            if (specialItem.getWrapping() == MailItem.WRAPPED) {
-                specialItem.unwrap();
-            }
+            specialItem.unwrap();
         }
     }
 
@@ -149,7 +142,7 @@ public class SpecialRobot extends Robot implements ICaution{
             this.setDestination_floor(this.getDeliveryItem().destination_floor);
         }
         else if (specialItem != null) {
-            this.setDestination_floor(specialItem.destination_floor);
+            this.setDestination_floor(specialItem.getDestFloor());
         }
     }
 
@@ -193,7 +186,7 @@ public class SpecialRobot extends Robot implements ICaution{
      * @param mailItem Item mailPool gives the robot
      */
     public void addToHand(MailItem mailItem) throws ItemTooHeavyException{
-        if (mailItem.fragile){
+        if (mailItem.getFragile()){
             boolean success = addToSpecialHands(mailItem);
             if (!success){
                 return;
@@ -206,7 +199,7 @@ public class SpecialRobot extends Robot implements ICaution{
                 return;
             }
             this.setDeliveryItem(mailItem);
-            if (this.getDeliveryItem().weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+            if (this.getDeliveryItem().getWeight() > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
     }
 
@@ -222,7 +215,7 @@ public class SpecialRobot extends Robot implements ICaution{
             return false;
         }
         specialItem = mailItem;
-        if (specialItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+        if (specialItem.getWeight() > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         return true;
     }
 

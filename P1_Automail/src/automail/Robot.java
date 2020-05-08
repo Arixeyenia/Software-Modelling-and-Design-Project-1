@@ -78,7 +78,7 @@ public class Robot {
 
     //Check if the mail item is in hands
     public boolean itemIsInHands(String id) {
-        if (deliveryItem.id.equals(id)){
+        if (deliveryItem.getId().equals(id)){
             return true;
         }
         else {
@@ -87,7 +87,7 @@ public class Robot {
     }
 
     public boolean itemIsInTube(String id) {
-        if (tube.id.equals(id)){
+        if (tube.getId().equals(id)){
             return true;
         }
         else {
@@ -234,15 +234,15 @@ public class Robot {
 
 	public void addToHand(MailItem mailItem) throws ItemTooHeavyException, BreakingFragileItemException {
 		assert(deliveryItem == null);
-		if(mailItem.fragile) throw new BreakingFragileItemException();
+		if(mailItem.getFragile()) throw new BreakingFragileItemException();
 		deliveryItem = mailItem;
-		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		if (deliveryItem.getWeight() > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
 	}
 
 	public void addToTube(MailItem mailItem) throws ItemTooHeavyException, BreakingFragileItemException {
 		assert(tube == null);
-		if(mailItem.fragile) throw new BreakingFragileItemException();
+		if(mailItem.getFragile()) throw new BreakingFragileItemException();
 		tube = mailItem;
-		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		if (tube.getWeight() > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
         }
 }

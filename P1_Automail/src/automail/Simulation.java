@@ -139,21 +139,21 @@ public class Simulation {
     			total_score += calculateDeliveryScore(deliveryItem);
 
     			if (STATISTICS_ENABLED) {
-					if (!deliveryItem.fragile) {
+					if (!deliveryItem.getFragile()) {
 						// Increment the number of normal packages delivered
 						normal_packs++;
 
 						// Increment the weight of normal packages delivered
-						normal_weight += deliveryItem.weight;
+						normal_weight += deliveryItem.getWeight();
 					}
-					else if (deliveryItem.fragile){
+					else if (deliveryItem.getFragile()){
 						// Increment the number of caution packages delivered
 						caution_packs++;
 
 						// Increment the weight of normal packages delivered
-						caution_weight += deliveryItem.weight;
+						caution_weight += deliveryItem.getWeight();
 
-						wrapping_time += 3;
+						wrapping_time += MailItem.TOTAL_WRAPPING_TIME;
 					}
 				}
     		}

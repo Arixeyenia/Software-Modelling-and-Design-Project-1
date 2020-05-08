@@ -8,7 +8,7 @@ import java.util.TreeMap;
 /**
  * Represents a mail item
  */
-public class MailItem {
+public class MailItem{
 	
     /** Represents the destination floor to which the mail is intended to go */
     protected final int destination_floor;
@@ -24,6 +24,7 @@ public class MailItem {
     public static final int UNWRAPPED = 0;
     public static final int HALF_WRAPPED = 1;
     public static final int WRAPPED = 2;
+    public static final int TOTAL_WRAPPING_TIME = 3;
     private int wrapping = UNWRAPPED;
 
     // Retrieves/Changes the wrapping status
@@ -31,24 +32,17 @@ public class MailItem {
         return wrapping;
     }
 
-    public void startWrapping() {
-        if (fragile) {
-            this.wrapping = HALF_WRAPPED;
-        }
-    }
-
-    public void finishWrapping() {
-        if (fragile) {
-            this.wrapping = WRAPPED;
+    public void wrap() {
+        if (fragile && wrapping != WRAPPED) {
+            this.wrapping++;
         }
     }
 
     public void unwrap() {
-        if (fragile) {
+        if (fragile && wrapping == WRAPPED) {
             this.wrapping = UNWRAPPED;
         }
     }
-
 
     /**
      * Constructor for a MailItem
@@ -100,6 +94,8 @@ public class MailItem {
    public int getWeight(){
        return weight;
    }
+
+    public boolean getFragile() { return fragile; }
    
 	static private int count = 0;
 	static private Map<Integer, Integer> hashMap = new TreeMap<Integer, Integer>();

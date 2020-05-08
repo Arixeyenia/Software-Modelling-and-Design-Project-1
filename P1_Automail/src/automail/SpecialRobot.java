@@ -83,15 +83,16 @@ public class SpecialRobot extends Robot implements ISpecialRobot{
         // If item to be delivered is fragile
         else if (specialItem != null && this.getDestination_floor() == this.specialItem.destination_floor){
 
+            if (specialItem.getWrapping() != MailItem.UNWRAPPED){
+                handleUnwrapping();
+                return;
+            }
+
             // If item is already unwrapped and ready to deliver, deliver and end delivery
             if (specialItem.getWrapping() == specialItem.UNWRAPPED){
                 this.delivery.deliver(specialItem);
                 specialItem = null;
-                return;
             }
-
-            // Hits this is not ready to be delivered, in which case, the item has to be unwrapped
-            handleUnwrapping();
         }
 
         this.incrementDeliveryCounter();
